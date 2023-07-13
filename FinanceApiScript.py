@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Wed Jul 12 17:28:02 2023
 
@@ -11,10 +9,12 @@ increased or decreased by a certain amount.
 
 from yahoo_fin.stock_info import get_data
 import pandas as pd
+import os
 
 def main():
     research_stock = create_all_stock_files()
     make_stock_comparisons(research_stock)
+    remove_files(research_stock)
     
 def create_all_stock_files():
     sheet_name = "Sheet1"
@@ -43,10 +43,17 @@ def get_ticker_data(sheet_name):
 
 def make_stock_comparisons(research_stock):
     stock_comparison = Comparisons(research_stock.ticker_files, research_stock)
-    which_comparison = input("Which comparison would you " +
-                             "like to make? (% change, simulate): ")
-    if which_comparison == "simulate":
+    which_comparison = input("Enter the number to view a comparison" +
+                             "(1. : Simulate Investment, 2. Show Percent Change): ")
+    if which_comparison == "1":
         stock_comparison.simulate_investment()
+    elif which_comparison == "2":
+        print()
+
+def remove_files(research_stock):
+    for file in research_stock.ticker_files:
+        os.remove(file)
+
 class Comparisons:
     
     def __init__(self, ticker_files, research_stock):
@@ -56,8 +63,9 @@ class Comparisons:
     def __str__():
         return "This is a class which compares different stocks"
     
-    def percentage_over_period(self):
-        print()
+    def percentage_change(self):
+        start_end_price = self.research_stock.read_price_change()
+         
     
     def simulate_investment(self):
         simulated_value = float(input("Enter the value you would like to simulate: "))
@@ -65,7 +73,7 @@ class Comparisons:
         for i in range(len(start_end_price)):
             new_value = round(simulated_value / float(start_end_price[i][0])
                             * float(start_end_price[i][1]), 2)
-            print(f"If you invested ${simulated_value} in " +
+            print(f"If you invested ${simulated_value} in" +
                   f" {self.research_stock.ticker_names[i]} on" +
                   f" {self.research_stock.start_date} you would have" +
                   f" ${new_value} on {self.research_stock.end_date}") 
@@ -141,9 +149,6 @@ class Stock:
                            adjusted_values[len(adjusted_values) - 1]))
         return max_mins
             
-
-           
-
 main()
 
 
